@@ -72,7 +72,7 @@ export function pluginOptionsSchema({ Joi }) {
     queryConcurrency: Joi.number()
       .integer()
       .min(1)
-      .default(10)
+      .default(5)
       .description(`The number of promises to run at one time.`),
   })
 }
@@ -104,7 +104,7 @@ const createSourcingConfig = async (
         if (!response.ok) {
           return reportPanic(
             1,
-            'Problem building GraphCMS nodes',
+            'Błąd GraphCMS nodes',
             response.statusText,
             reporter
           )
@@ -116,7 +116,7 @@ const createSourcingConfig = async (
         if (response.errors) {
           return reportPanic(
             2,
-            'Problem building GraphCMS nodes',
+            'Błąd GraphCMS nodes',
             JSON.stringify(response.errors, null, 2),
             reporter
           )
@@ -127,7 +127,7 @@ const createSourcingConfig = async (
       .catch((error) => {
         return reportPanic(
           3,
-          'Problem building GraphCMS nodes',
+          'Błąd GraphCMS nodes',
           JSON.stringify(error, null, 2),
           reporter
         )
@@ -461,7 +461,6 @@ export function createResolvers(
       description: `The style of temporary image shown while the full image loads.
         BLURRED: generates a very low-resolution version of the image and displays it as a blurred background (default).
         DOMINANT_COLOR: the dominant color of the image used as a solid background color.
-        TRACED_SVG: generates a simplified, flat SVG version of the source image, which it displays as a placeholder.
         NONE: No placeholder. Use the backgroundColor option to set a static background if you wish.
         `,
     },

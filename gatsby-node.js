@@ -26,15 +26,15 @@ var _he = _interopRequireDefault(require("he"));
 
 var _nodeFetch = _interopRequireDefault(require("node-fetch"));
 
-var _constants = require("./util/constants");
+var _constants = require("./src/util/constants");
 
-var _getImageBase = require("./util/getImageBase64");
+var _getImageBase = require("./src/util/getImageBase64");
 
-var _getDominantColor = require("./util/getDominantColor");
+var _getDominantColor = require("./src/util/getDominantColor");
 
-var _getTracedSVG = require("./util/getTracedSVG");
+var _getTracedSVG = require("./src/util/getTracedSVG");
 
-var _reportPanic = require("./util/reportPanic");
+var _reportPanic = require("./src/util/reportPanic");
 
 function pluginOptionsSchema({
   Joi

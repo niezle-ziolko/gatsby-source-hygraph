@@ -1,10 +1,18 @@
-import { PLUGIN_NAME } from './constants'
+"use strict";
 
-export function reportPanic(id, message, error, reporter) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.reportPanic = reportPanic;
+
+var _constants = require("./constants");
+
+function reportPanic(id, message, error, reporter) {
   return reporter.panic({
     context: {
       id,
-      sourceMessage: `[${PLUGIN_NAME}]: ${message} \n\n ${new Error(error)}`,
-    },
-  })
+      sourceMessage: `[${_constants.PLUGIN_NAME}]: ${message} \n\n ${new Error(error)}`
+    }
+  });
 }
+//# sourceMappingURL=reportPanic.js.map

@@ -1,34 +1,47 @@
-import { extname } from 'path'
-import { fetchRemoteFile } from 'gatsby-core-utils'
+"use strict";
 
-import { PLUGIN_NAME } from './constants'
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getTracedSVG = getTracedSVG;
 
-export async function getTracedSVG({ url, internal, filename, cache }) {
+var _path = require("path");
+
+var _gatsbyCoreUtils = require("gatsby-core-utils");
+
+var _constants = require("./constants");
+
+async function getTracedSVG({
+  url,
+  internal,
+  filename,
+  cache
+}) {
   try {
-    const { traceSVG } = require(`gatsby-plugin-sharp`)
+    const {
+      traceSVG
+    } = require(`gatsby-plugin-sharp`);
 
-    const filePath = await fetchRemoteFile({
+    const filePath = await (0, _gatsbyCoreUtils.fetchRemoteFile)({
       url,
-      cache,
-    })
-
-    const extension = extname(filePath)
-
+      cache
+    });
+    const extension = (0, _path.extname)(filePath);
     const image = await traceSVG({
       file: {
         internal,
         name: filename,
         extension,
-        absolutePath: filePath,
+        absolutePath: filePath
       },
-      args: { toFormat: `` },
-      fileArgs: {},
-    })
-
-    return image
+      args: {
+        toFormat: ``
+      },
+      fileArgs: {}
+    });
+    return image;
   } catch (err) {
-    console.error(
-      `[${PLUGIN_NAME}] In order to use the traced svg placeholder, you need to install gatsby-plugin-sharp`
-    )
+    console.error(`[${_constants.PLUGIN_NAME}] In order to use the traced svg placeholder, you need to install gatsby-plugin-sharp`);
   }
 }
+//# sourceMappingURL=getTracedSVG.js.map
