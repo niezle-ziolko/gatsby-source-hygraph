@@ -1,0 +1,11 @@
+fragment User on User {
+  stage
+  isActive
+  remoteId: id
+  picture
+  createdAt
+  updatedAt
+  name
+  publishedAt
+  kind
+}

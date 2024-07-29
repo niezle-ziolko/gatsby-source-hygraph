@@ -1,0 +1,85 @@
+fragment AuthUser on AuthUser {
+  stage
+  publishedAt
+  updatedAt
+  createdAt
+  remoteId: id
+  authId
+  firstName
+  lastName
+  eMail
+  phoneNumber
+  dateBirthday
+  eMailVerified
+  newsletter
+  newsletterId
+  loyaltyId
+  uuid
+  furgonetkaId
+  invoiceAddress {
+    ... on InvoiceAddress {
+      stage
+      id
+      company
+      nip
+      address
+      zip
+      city
+      countryCode
+    }
+  }
+  shippingAddress {
+    ... on ShippingAddress {
+      stage
+      id
+      company
+      address
+      zip
+      city
+      countryCode
+    }
+  }
+  publishedBy {
+    ... on User {
+      remoteTypeName: __typename
+      remoteId: id
+      stage
+    }
+  }
+  updatedBy {
+    ... on User {
+      remoteTypeName: __typename
+      remoteId: id
+      stage
+    }
+  }
+  createdBy {
+    ... on User {
+      remoteTypeName: __typename
+      remoteId: id
+      stage
+    }
+  }
+  orders {
+    ... on Order {
+      remoteTypeName: __typename
+      remoteId: id
+      stage
+    }
+  }
+  productsDownoadable {
+    ... on Product {
+      remoteTypeName: __typename
+      remoteId: id
+      locale
+      stage
+    }
+  }
+  scheduledIn {
+    ... on ScheduledOperation {
+      remoteTypeName: __typename
+      remoteId: id
+      stage
+    }
+  }
+}

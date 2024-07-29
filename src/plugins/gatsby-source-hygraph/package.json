@@ -1,0 +1,40 @@
+{
+  "name": "gatsby-source-hygraph",
+  "version": "1.0.0",
+  "description": "Unofficial Gatsby source plugin for GraphCMS projects",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src --out-dir ./ --source-maps"
+  },
+  "keywords": [
+    "data",
+    "gatsby",
+    "gatsby-plugin",
+    "graphcms",
+    "graphql",
+    "source"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@babel/runtime": "7.23.2",
+    "gatsby-core-utils": "4.12.0",
+    "gatsby-graphql-source-toolkit": "^2.0.4",
+    "gatsby-source-filesystem": "5.12.0",
+    "he": "1.2.0",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.23.0",
+    "@babel/core": "7.23.2",
+    "@babel/plugin-transform-runtime": "7.23.2",
+    "@babel/preset-env": "7.23.2"
+  },
+  "peerDependencies": {
+    "gatsby": "^5.12.4",
+    "gatsby-plugin-image": "^3.12.0"
+  },
+  "engines": {
+    "node": ">=20.6.1"
+  },
+  "author": "trill-normanik"
+}

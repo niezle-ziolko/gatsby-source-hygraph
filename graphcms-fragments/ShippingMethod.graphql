@@ -1,0 +1,53 @@
+fragment ShippingMethod on ShippingMethod {
+  stage
+  publishedAt
+  updatedAt
+  createdAt
+  remoteId: id
+  name
+  amount
+  service
+  publishedBy {
+    ... on User {
+      remoteTypeName: __typename
+      remoteId: id
+      stage
+    }
+  }
+  updatedBy {
+    ... on User {
+      remoteTypeName: __typename
+      remoteId: id
+      stage
+    }
+  }
+  createdBy {
+    ... on User {
+      remoteTypeName: __typename
+      remoteId: id
+      stage
+    }
+  }
+  taxClass {
+    ... on TaxClass {
+      remoteTypeName: __typename
+      remoteId: id
+      stage
+    }
+  }
+  paymentMethods {
+    ... on PaymentMethod {
+      remoteTypeName: __typename
+      remoteId: id
+      stage
+    }
+  }
+  deliveryType
+  scheduledIn {
+    ... on ScheduledOperation {
+      remoteTypeName: __typename
+      remoteId: id
+      stage
+    }
+  }
+}
