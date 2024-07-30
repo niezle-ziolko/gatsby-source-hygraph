@@ -4,7 +4,7 @@ import { GatsbyImage, getImage } from "gatsby-plugin-image"
 
 const IndexPage = ({ data }) => {
   const images = data.allProductImage.nodes
-  console.log(images)  // Dodaj console.log, aby sprawdzić dane
+  console.log(images)
 
   return (
     <div>
@@ -37,7 +37,7 @@ export const query = graphql`
       nodes {
         handle
         fileName
-        gatsbyImageData
+        gatsbyImageData(layout: FIXED, width: 10, height: 10)
       }
     }
   }
