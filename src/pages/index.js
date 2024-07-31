@@ -37,10 +37,10 @@ export const query = graphql`
       nodes {
         handle
         fileName
-        gatsbyImageData(layout: FIXED, width: 10, height: 10)
+        gatsbyImageData
       }
     }
   }
 `
 
-export default IndexPage
+export default IndexPage;

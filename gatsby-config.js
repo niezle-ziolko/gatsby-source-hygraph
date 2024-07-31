@@ -22,6 +22,9 @@ module.exports = {
         fetchOptions: {}
       },
     },
+    {
+      resolve: require.resolve(`./src/plugins/gatsby-source-hygraph`)
+    },
     'gatsby-plugin-image',
     'gatsby-plugin-sharp',
     'gatsby-transformer-sharp'
