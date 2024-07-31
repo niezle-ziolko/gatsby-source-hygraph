@@ -11,18 +11,6 @@ module.exports = {
   },
   plugins: [
     {
-      resolve: 'gatsby-source-graphql',
-      options: {
-        typeName: 'GQL',
-        fieldName: 'graphql',
-        url: `${process.env.ENDPOINT}`,
-        headers: {
-          Authorization: `Bearer ${process.env.TOKEN}`,
-        },
-        fetchOptions: {}
-      },
-    },
-    {
       resolve: require.resolve(`./src/plugins/gatsby-source-hygraph`)
     },
     'gatsby-plugin-image',
