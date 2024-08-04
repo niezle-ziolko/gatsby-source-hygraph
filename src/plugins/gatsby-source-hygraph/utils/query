@@ -1,0 +1,328 @@
+query content {
+  categories {
+    id
+    name
+    slug
+    locale
+    updatedAt
+    cssClass
+    localizations {
+      name
+      slug
+      locale
+      updatedAt
+      description {
+        description
+        seo
+        locale
+      }
+    }
+    description {
+      description
+      seo
+    }
+    image {
+      altText
+      url
+      fileName
+      width
+      height
+      handle
+      mimeType
+    }
+    products {
+      id
+      sku
+      name
+      slug
+      localizations {
+        name
+        slug
+        locale
+      }
+      price {
+        regularPrice
+        salesPrice
+      }
+      masterImage {
+        altText
+        url
+        fileName
+        width
+        height
+        handle
+        mimeType
+      }
+    }
+  }
+  producers {
+    id
+    name
+    slug
+    locale
+    updatedAt
+    localizations {
+      name
+      slug
+      locale
+      updatedAt
+    }
+    description {
+      description
+      seo
+      localizations {
+        description
+        seo
+        locale
+      }
+    }
+    image {
+      altText
+      url
+      fileName
+      width
+      height
+      handle
+      mimeType
+    }
+    products {
+      id
+      sku
+      name
+      slug
+      localizations {
+        name
+        slug
+        locale
+      }
+      price {
+        regularPrice
+        salesPrice
+      }
+      masterImage {
+        altText
+        url
+        fileName
+        width
+        height
+        handle
+        mimeType
+      }
+    }
+  }
+  products {
+    id
+    sku
+    name
+    slug
+    locale
+    updatedAt
+    localizations {
+      name
+      slug
+      locale
+      updatedAt
+    }
+    quantity {
+      quantity
+    }
+    price {
+      regularPrice
+      salesPrice
+      omnibus
+      taxClass {
+        value
+      }
+    }
+    masterImage {
+      altText
+      url
+      fileName
+      width
+      height
+      handle
+      mimeType
+    }
+    images {
+      altText
+      url
+      fileName
+      width
+      height
+      handle
+      mimeType
+    }
+    description {
+      description
+      shortDescription
+      seo
+      locale
+      localizations {
+        description
+        shortDescription
+        seo
+        locale
+      }
+    }
+    category {
+      name
+      slug
+      locale
+      localizations {
+        name
+        slug
+      }
+    }
+    producer {
+      name
+      slug
+      locale
+      localizations {
+        name
+        slug
+      }
+    }
+    tags {
+      name
+      slug
+      locale
+      localizations {
+        name
+        slug
+      }
+    }
+  }
+  pages {
+    id
+    title
+    slug
+    locale
+    updatedAt
+    content
+    content2
+    content3
+    message
+    message2
+    message3
+    message4
+    message5
+    message6
+    message7
+    message8
+    message9
+    message10
+    message11
+    message12
+    message13
+    message14
+    message15
+    localizations {
+      title
+      slug
+      locale
+      updatedAt
+      content
+      content2
+      content3
+      message
+      message2
+      message3
+      message4
+      message5
+      message6
+      message7
+      message8
+      message9
+      message10
+      message11
+      message12
+      message13
+      message14
+      message15
+    }
+  }
+  contents {
+    title
+    locale
+    message
+    message2
+    message3
+    message4
+    message5
+    message6
+    message7
+    message8
+    message9
+    message10
+    message11
+    localizations {
+      title
+      locale
+      message
+      message2
+      message3
+      message4
+      message5
+      message6
+      message7
+      message8
+      message9
+      message10
+      message11
+    }
+  }
+  upsells {
+    locale
+    message
+    message2
+    message3
+    localizations {
+      locale
+      message
+      message2
+      message3
+    }
+    product {
+      id
+      name
+      slug
+      category {
+        name
+      }
+      localizations {
+        name
+        slug
+        category {
+          name
+        }
+      }
+      masterImage {
+        altText
+        url
+        fileName
+        width
+        height
+        handle
+        mimeType
+      }
+    }
+  }
+  currencies {
+    default
+    code
+    rate
+  }
+  paymentMethods {
+    id
+    name
+    paymentType
+    provider
+  }
+  shippingMethods {
+    id
+    name
+    amount
+    deliveryType
+    service
+  }
+}
