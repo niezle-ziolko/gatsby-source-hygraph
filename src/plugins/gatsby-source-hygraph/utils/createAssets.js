@@ -64,7 +64,7 @@ async function fetchAssets(reporter) {
 
             await fs.writeFile(assetFilePath, JSON.stringify(data, null, 2));
 
-            reporter.success(`GraphQL query for ${pluralName} with locale ${locale} has been successfully sent, processed, and saved to ${assetFilePath}.`);
+            reporter.success(`fetching ${pluralName}-${locale}`);
           } catch (fetchError) {
             reporter.error(`Failed to fetch data for ${pluralName} with locale ${locale}:`, fetchError);
             await new Promise(resolve => setTimeout(resolve, 600));
