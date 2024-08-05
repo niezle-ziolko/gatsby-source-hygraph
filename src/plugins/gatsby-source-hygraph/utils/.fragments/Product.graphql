@@ -1,0 +1,117 @@
+fragment Product on Product {
+  stage
+  locale
+  publishedAt
+  updatedAt
+  createdAt
+  id
+  name
+  sku
+  slug
+  ean
+  stampedId
+  description {
+    ... on Description {
+      stage
+      locale
+      id
+      description
+      shortDescription
+      seo
+    }
+  }
+  price {
+    ... on Price {
+      stage
+      id
+      regularPrice
+      salesPrice
+      omnibus
+      salesDate
+      taxClass {
+        ... on TaxClass {
+          stage
+          id
+          value
+        }
+      }
+    }
+  }
+  quantity {
+    ... on Quantity {
+      stage
+      id
+      quantity
+      link
+      productType
+    }
+  }
+  publishedBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  updatedBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  createdBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  masterImage {
+    ... on Asset {
+      __typename
+      id
+      locale
+      stage
+    }
+  }
+  images(first: 100) {
+    ... on Asset {
+      __typename
+      id
+      locale
+      stage
+    }
+  }
+  tags(first: 100) {
+    ... on Tag {
+      __typename
+      id
+      locale
+      stage
+    }
+  }
+  category {
+    ... on Category {
+      __typename
+      id
+      locale
+      stage
+    }
+  }
+  producer {
+    ... on Producer {
+      __typename
+      id
+      locale
+      stage
+    }
+  }
+  scheduledIn(first: 100) {
+    ... on ScheduledOperation {
+      __typename
+      id
+      stage
+    }
+  }
+}

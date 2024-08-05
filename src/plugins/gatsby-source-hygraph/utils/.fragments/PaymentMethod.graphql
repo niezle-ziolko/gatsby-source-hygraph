@@ -1,0 +1,38 @@
+fragment PaymentMethod on PaymentMethod {
+  stage
+  publishedAt
+  updatedAt
+  createdAt
+  id
+  name
+  provider
+  publishedBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  updatedBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  createdBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  paymentType
+  scheduledIn(first: 100) {
+    ... on ScheduledOperation {
+      __typename
+      id
+      stage
+    }
+  }
+}

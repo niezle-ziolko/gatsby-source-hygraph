@@ -52,6 +52,9 @@ async function fetchFragments(reporter) {
                         ofType {
                           name
                           kind
+                          fields {
+                            name
+                          }
                         }
                       }
                     }
@@ -91,8 +94,6 @@ async function fetchFragments(reporter) {
       'PaymentMethod',
       'Producer',
       'Product',
-      'RichText',
-      'RGBA',
       'ShippingMethod',
       'Slice',
       'Tag',

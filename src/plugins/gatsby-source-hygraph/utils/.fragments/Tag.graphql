@@ -1,0 +1,47 @@
+fragment Tag on Tag {
+  stage
+  locale
+  publishedAt
+  updatedAt
+  createdAt
+  id
+  name
+  slug
+  slugPrefix
+  publishedBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  updatedBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  createdBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  products(first: 100) {
+    ... on Product {
+      __typename
+      id
+      locale
+      stage
+    }
+  }
+  scheduledIn(first: 100) {
+    ... on ScheduledOperation {
+      __typename
+      id
+      stage
+    }
+  }
+}

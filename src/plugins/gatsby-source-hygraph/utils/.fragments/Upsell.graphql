@@ -1,0 +1,48 @@
+fragment Upsell on Upsell {
+  stage
+  locale
+  publishedAt
+  updatedAt
+  createdAt
+  id
+  title
+  message
+  message2
+  message3
+  publishedBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  updatedBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  createdBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  product {
+    ... on Product {
+      __typename
+      id
+      locale
+      stage
+    }
+  }
+  scheduledIn(first: 100) {
+    ... on ScheduledOperation {
+      __typename
+      id
+      stage
+    }
+  }
+}

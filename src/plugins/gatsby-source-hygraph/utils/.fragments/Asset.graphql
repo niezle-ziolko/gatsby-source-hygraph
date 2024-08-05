@@ -1,0 +1,77 @@
+fragment Asset on Asset {
+  stage
+  locale
+  mimeType
+  size
+  width
+  height
+  fileName
+  handle
+  publishedAt
+  updatedAt
+  createdAt
+  id
+  altText
+  origin
+  publishedBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  updatedBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  createdBy {
+    ... on User {
+      __typename
+      id
+      stage
+    }
+  }
+  imageCategory(first: 100) {
+    ... on Category {
+      __typename
+      id
+      locale
+      stage
+    }
+  }
+  masterImageProduct(first: 100) {
+    ... on Product {
+      __typename
+      id
+      locale
+      stage
+    }
+  }
+  imageProducer(first: 100) {
+    ... on Producer {
+      __typename
+      id
+      locale
+      stage
+    }
+  }
+  imagesProduct(first: 100) {
+    ... on Product {
+      __typename
+      id
+      locale
+      stage
+    }
+  }
+  scheduledIn(first: 100) {
+    ... on ScheduledOperation {
+      __typename
+      id
+      stage
+    }
+  }
+  url
+}

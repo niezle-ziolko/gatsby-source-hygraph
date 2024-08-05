@@ -24,9 +24,7 @@ function formatFragment(fragment) {
 };
 
 function isMultimediaField(field) {
-  return field.name.toLowerCase().includes('image') || 
-         field.name.toLowerCase().includes('asset') || 
-         field.name.toLowerCase().includes('file') ||
+  return field.name.toLowerCase().includes('asset') || 
          (field.type && field.type.name && field.type.name.toLowerCase().includes('asset'));
 };
 
@@ -61,6 +59,23 @@ async function getObjectSchema(typeName, schema) {
   }`;
 };
 
+function getFieldQuery(field, listTypeName) {
+  const commonFields = ['__typename', 'id', 'stage'];
+
+  const fields = field?.type?.ofType?.ofType?.ofType?.fields || [];
+  const localeField = fields.some(f => f.name === 'locale') ? 'locale' : '';
+
+  if (localeField) {
+    commonFields.splice(2, 0, localeField);
+  };
+
+  return `${field.name}(first: 100) {
+    ... on ${listTypeName} {
+      ${commonFields.join('\n')}
+    }
+  }`;
+};
+
 async function filterFields(fields, schema, excludedFields = []) {
   const commonExcludedFields = ['localizations', 'documentInStages', 'history'];
 
@@ -77,10 +92,6 @@ async function filterFields(fields, schema, excludedFields = []) {
           stage
         }
       }`;
-    };
-
-    if (['publishedAt', 'updatedAt', 'createdAt'].includes(field.name)) {
-      return `${field.name}(variation: COMBINED)`;
     };
 
     if (['publishedBy', 'updatedBy', 'createdBy'].includes(field.name)) {
@@ -115,15 +126,9 @@ async function filterFields(fields, schema, excludedFields = []) {
       const listTypeName = field.type.ofType.ofType.ofType && field.type.ofType.ofType.ofType.name 
         ? field.type.ofType.ofType.ofType.name 
         : capitalizeFirstLetter(field.name || 'UnknownType');
-      return `${field.name}(first: 100) {
-        ... on ${listTypeName} {
-          __typename
-          id
-          locale
-          stage
-        }
-      }`;
-    };
+      
+      return getFieldQuery(field, listTypeName);
+    }
 
     if (field.type.kind === 'OBJECT') {
       const fragmentsDir = path.resolve(__dirname, '.fragments');
