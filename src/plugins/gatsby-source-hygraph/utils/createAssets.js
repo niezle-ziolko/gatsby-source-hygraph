@@ -4,33 +4,15 @@ const fs = require('fs').promises;
 const path = require('path');
 const fetch = require('node-fetch');
 
+const { formatField } = require('./utils');
 
-function toPlural(word) {
-  const lowerWord = word.toLowerCase();
-  let plural = '';
-
-  if (lowerWord.endsWith('y')) {
-    plural = word.slice(0, -1) + 'ies';
-  } else if (lowerWord.endsWith('s') || 
-             lowerWord.endsWith('x') ||
-             lowerWord.endsWith('z') ||
-             lowerWord.endsWith('sh') ||
-             lowerWord.endsWith('ch')
-            ) {
-    plural = word + 'es';
-  } else if (lowerWord.endsWith('class')) {
-    plural = word + 'es';
-  } else {
-    plural = word + 's';
-  };
-
-  return plural.charAt(0).toLowerCase() + plural.slice(1);
-};
 
 async function fetchAssets(reporter) {
   const fragmentsDir = path.resolve(__dirname, '.fragments');
+  const assetsDir = path.resolve(__dirname, '.assets');
   const endpoint = process.env.ENDPOINT;
   const token = process.env.TOKEN;
+  const locales = ['en', 'pl'];
 
   try {
     const fragmentsExist = await fs.access(fragmentsDir).then(() => true).catch(() => false);
@@ -43,37 +25,50 @@ async function fetchAssets(reporter) {
         const fragmentPath = path.join(fragmentsDir, file);
         const fragmentContent = await fs.readFile(fragmentPath, 'utf8');
 
-        const pluralName = toPlural(fragmentName);
-        const query = `query {
-          ${pluralName} {
-            ...${fragmentName}
+        const pluralName = formatField(fragmentName);
+
+        for (const locale of locales) {
+          const query = `query {
+            ${pluralName}(locales: ${locale}) {
+              ...${fragmentName}
+            }
           }
-        }
 
-        ${fragmentContent}`;
+          ${fragmentContent}`;
 
-        console.log(`Generated GraphQL query for ${pluralName}:\n${query}\n`);
+          try {
+            const response = await fetch(endpoint, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+              },
+              body: JSON.stringify({ query })
+            });
 
-        try {
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token
-            },
-            body: JSON.stringify({ query })
-          });
+            if (!response.ok) {
+              const errorBody = await response.text();
+              throw new Error(`HTTP error! status: ${response.status}, response: ${errorBody}`);
+            };
 
-          if (!response.ok) {
-            const errorBody = await response.text();
-            throw new Error(`HTTP error! status: ${response.status}, response: ${errorBody}`);
+            const data = await response.json();
+
+            const assetsExist = await fs.access(assetsDir).then(() => true).catch(() => false);
+
+            if (!assetsExist) {
+              await fs.mkdir(assetsDir);
+            };
+
+            const assetFileName = `${pluralName}-${locale}.json`;
+            const assetFilePath = path.join(assetsDir, assetFileName);
+
+            await fs.writeFile(assetFilePath, JSON.stringify(data, null, 2));
+
+            reporter.success(`GraphQL query for ${pluralName} with locale ${locale} has been successfully sent, processed, and saved to ${assetFilePath}.`);
+          } catch (fetchError) {
+            reporter.error(`Failed to fetch data for ${pluralName} with locale ${locale}:`, fetchError);
+            await new Promise(resolve => setTimeout(resolve, 600));
           };
-
-          const data = await response.json();
-          reporter.success(`GraphQL query for ${pluralName} has been successfully sent and processed.`);
-        } catch (fetchError) {
-          reporter.error(`Failed to fetch data for ${pluralName}:`, fetchError);
-          await new Promise(resolve => setTimeout(resolve, 1000));
         };
       };
     } else {

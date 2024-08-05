@@ -3,6 +3,27 @@ const fs = require('fs').promises;
 const path = require('path');
 
 
+function formatField(word) {
+  const lowerWord = word.toLowerCase();
+  let plural = '';
+
+  if (lowerWord.endsWith('y')) {
+    plural = word.slice(0, -1) + 'ies';
+  } else if (lowerWord.endsWith('s') || 
+             lowerWord.endsWith('x') ||
+             lowerWord.endsWith('z') ||
+             lowerWord.endsWith('sh') ||
+             lowerWord.endsWith('ch') ||
+             lowerWord.endsWith('ss')
+            ) {
+    plural = word + 'es';
+  } else {
+    plural = word + 's';
+  };
+
+  return plural.charAt(0).toLowerCase() + plural.slice(1);
+};
+
 function formatFragment(fragment) {
   let formatted = '';
   let indent = 0;
@@ -157,6 +178,7 @@ async function filterFields(fields, schema, excludedFields = []) {
 };
 
 module.exports = {
+  formatField,
   filterFields,
   formatFragment
 };
