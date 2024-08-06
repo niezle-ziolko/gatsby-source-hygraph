@@ -1,5 +1,5 @@
 "use strict";
-
+Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require('fs').promises;
 const path = require('path');
 const fetch = require('node-fetch');
@@ -10,7 +10,8 @@ const { formatField } = require('./utils');
 async function fetchAssets(reporter, options) {
   const fragmentsDir = path.resolve(process.cwd(), options.fragmentsPath || '.fragments');
   const assetsDir = path.resolve(process.cwd(), options.assetsPath || '.assets');
-  const locales = ['en', 'pl'];
+  const locales = options.locales || ['en'];
+  const stages = options.stages || ['PUBLISHED'];
 
   try {
     const fragmentsExist = await fs.access(fragmentsDir).then(() => true).catch(() => false);
@@ -27,36 +28,41 @@ async function fetchAssets(reporter, options) {
         const aggregatedData = {};
 
         for (const locale of locales) {
-          const query = `query {
-            ${pluralName}(locales: ${locale}) {
-              ...${fragmentName}
+          for (const stage of stages) {
+            const query = `query {
+              ${pluralName}(locales: ${locale}, stage: ${stage}) {
+                ...${fragmentName}
+              }
             }
-          }
 
-          ${fragmentContent}`;
+            ${fragmentContent}`;
 
-          try {
-            const response = await fetch(options.endpoint, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': options.token
-              },
-              body: JSON.stringify({ query })
-            });
+            try {
+              const response = await fetch(options.endpoint, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': options.token
+                },
+                body: JSON.stringify({ query })
+              });
 
-            if (!response.ok) {
-              const errorBody = await response.text();
-              throw new Error(`HTTP error! status: ${response.status}, response: ${errorBody}`);
+              if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(`HTTP error! status: ${response.status}, response: ${errorBody}`);
+              };
+
+              const data = await response.json();
+              if (!aggregatedData[locale]) {
+                aggregatedData[locale] = {};
+              };
+              aggregatedData[locale][stage] = data;
+            } catch (fetchError) {
+              reporter.error(`Failed to fetch data for ${pluralName} with locale ${locale} and stage ${stage}:`, fetchError);
+              await new Promise(resolve => setTimeout(resolve, 600));
             };
-
-            const data = await response.json();
-            aggregatedData[locale] = data;
-          } catch (fetchError) {
-            reporter.error(`Failed to fetch data for ${pluralName} with locale ${locale}:`, fetchError);
-            await new Promise(resolve => setTimeout(resolve, 600));
           };
-        }
+        };
 
         try {
           const assetsExist = await fs.access(assetsDir).then(() => true).catch(() => false);
@@ -71,7 +77,7 @@ async function fetchAssets(reporter, options) {
           reporter.success(`fetching ${pluralName}`);
         } catch (writeError) {
           reporter.error(`Failed to write data for ${pluralName}:`, writeError);
-        }
+        };
       };
     } else {
       reporter.info('.fragments folder does not exist, skipping GraphQL queries.');
