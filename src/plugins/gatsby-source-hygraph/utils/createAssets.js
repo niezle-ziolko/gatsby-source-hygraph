@@ -7,11 +7,9 @@ const fetch = require('node-fetch');
 const { formatField } = require('./utils');
 
 
-async function fetchAssets(reporter) {
-  const fragmentsDir = path.resolve(__dirname, '.fragments');
-  const assetsDir = path.resolve(__dirname, '.assets');
-  const endpoint = process.env.ENDPOINT;
-  const token = process.env.TOKEN;
+async function fetchAssets(reporter, options) {
+  const fragmentsDir = path.resolve(process.cwd(), options.fragmentsPath || '.fragments');
+  const assetsDir = path.resolve(process.cwd(), options.assetsPath || '.assets');
   const locales = ['en', 'pl'];
 
   try {
@@ -26,6 +24,7 @@ async function fetchAssets(reporter) {
         const fragmentContent = await fs.readFile(fragmentPath, 'utf8');
 
         const pluralName = formatField(fragmentName);
+        const aggregatedData = {};
 
         for (const locale of locales) {
           const query = `query {
@@ -37,11 +36,11 @@ async function fetchAssets(reporter) {
           ${fragmentContent}`;
 
           try {
-            const response = await fetch(endpoint, {
+            const response = await fetch(options.endpoint, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': token
+                'Authorization': options.token
               },
               body: JSON.stringify({ query })
             });
@@ -52,24 +51,27 @@ async function fetchAssets(reporter) {
             };
 
             const data = await response.json();
-
-            const assetsExist = await fs.access(assetsDir).then(() => true).catch(() => false);
-
-            if (!assetsExist) {
-              await fs.mkdir(assetsDir);
-            };
-
-            const assetFileName = `${pluralName}-${locale}.json`;
-            const assetFilePath = path.join(assetsDir, assetFileName);
-
-            await fs.writeFile(assetFilePath, JSON.stringify(data, null, 2));
-
-            reporter.success(`fetching ${pluralName}-${locale}`);
+            aggregatedData[locale] = data;
           } catch (fetchError) {
             reporter.error(`Failed to fetch data for ${pluralName} with locale ${locale}:`, fetchError);
             await new Promise(resolve => setTimeout(resolve, 600));
           };
-        };
+        }
+
+        try {
+          const assetsExist = await fs.access(assetsDir).then(() => true).catch(() => false);
+          if (!assetsExist) {
+            await fs.mkdir(assetsDir);
+          };
+
+          const assetFileName = `${pluralName}.json`;
+          const assetFilePath = path.join(assetsDir, assetFileName);
+
+          await fs.writeFile(assetFilePath, JSON.stringify(aggregatedData, null, 2));
+          reporter.success(`fetching ${pluralName}`);
+        } catch (writeError) {
+          reporter.error(`Failed to write data for ${pluralName}:`, writeError);
+        }
       };
     } else {
       reporter.info('.fragments folder does not exist, skipping GraphQL queries.');

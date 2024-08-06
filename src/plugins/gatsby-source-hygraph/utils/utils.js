@@ -97,7 +97,7 @@ function getFieldQuery(field, listTypeName) {
   }`;
 };
 
-async function filterFields(fields, schema, excludedFields = []) {
+async function filterFields(fields, schema, options, excludedFields = []) {
   const commonExcludedFields = ['localizations', 'documentInStages', 'history'];
 
   const annotatedFields = await Promise.all(fields.map(async (field) => {
@@ -152,7 +152,7 @@ async function filterFields(fields, schema, excludedFields = []) {
     }
 
     if (field.type.kind === 'OBJECT') {
-      const fragmentsDir = path.resolve(__dirname, '.fragments');
+      const fragmentsDir = path.resolve(process.cwd(), options.fragmentsPath || '.fragments');
       const fragmentFilePath = path.join(fragmentsDir, `${field.type.name}.graphql`);
       const fragmentExists = await fs.access(fragmentFilePath).then(() => true).catch(() => false);
 

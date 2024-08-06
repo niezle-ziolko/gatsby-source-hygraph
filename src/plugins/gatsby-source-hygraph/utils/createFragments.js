@@ -7,43 +7,41 @@ const fetch = require('node-fetch');
 const { filterFields, formatFragment } = require('./utils');
 
 
-async function fetchFragments(reporter) {
-  const fragmentsDir = path.resolve(__dirname, '.fragments');
+async function fetchFragments(reporter, options) {
+  const fragmentsDir = path.resolve(process.cwd(), options.fragmentsPath || '.fragments');
 
   try {
     if (await fs.access(fragmentsDir).then(() => true).catch(() => false)) {
-      reporter.info('Folder ".fragments" already exists. No need to fetch fragments.');
+      reporter.info(`Folder "${options.fragmentsPath || '.fragments'}" already exists. No need to fetch fragments.`);
+     
       return;
     };
 
     await fs.mkdir(fragmentsDir, { recursive: true });
-    reporter.info('Folder ".fragments" has been created.');
+      reporter.info(`Folder "${options.fragmentsPath || '.fragments'}" has been created.`);
 
-    if (!process.env.ENDPOINT || !process.env.TOKEN) {
-      reporter.error('ENDPOINT or TOKEN environment variables are not set.');
+      if (!options.endpoint || !options.token) {
+        reporter.error('ENDPOINT or TOKEN options are not set.');
       
-      return;
-    };
+        return;
+      };
 
-    const response = await fetch(process.env.ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.TOKEN}`
-      },
-      body: JSON.stringify({
-        query: `
-          {
-            __schema {
-              types {
-                kind
-                name
-                fields {
+      const response = await fetch(options.endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${options.token}`
+        },
+        body: JSON.stringify({
+          query: `
+            {
+              __schema {
+                types {
+                  kind
                   name
-                  type {
+                  fields {
                     name
-                    kind
-                    ofType {
+                    type {
                       name
                       kind
                       ofType {
@@ -52,8 +50,12 @@ async function fetchFragments(reporter) {
                         ofType {
                           name
                           kind
-                          fields {
+                          ofType {
                             name
+                            kind
+                            fields {
+                              name
+                            }
                           }
                         }
                       }
@@ -62,63 +64,54 @@ async function fetchFragments(reporter) {
                 }
               }
             }
-          }
-        `,
-      }),
-    });
+          `
+        })
+      });
 
-    if (!response.ok) {
-      const text = await response.text();
-      reporter.error(`API response error: ${text}`);
-      
-      return;
-    };
-
-    const result = await response.json();
-
-    if (!result.data || !result.data.__schema) {
-      reporter.error('API response does not contain __schema.');
-      console.log('Response:', result);
-      
-      return;
-    };
-
-    const schema = result.data.__schema.types;
-
-    const allowedTypes = [
-      'Asset',
-      'Category',
-      'Content',
-      'Currency',
-      'Page',
-      'PaymentMethod',
-      'Producer',
-      'Product',
-      'ShippingMethod',
-      'Slice',
-      'Tag',
-      'TaxClass',
-      'Upsell',
-      'User'
-    ];
-
-    for (const type of schema) {
-      if (type.kind === 'OBJECT' && allowedTypes.includes(type.name)) {
-        const annotatedFields = await filterFields(type.fields, schema);
-        const fields = annotatedFields.join('\n  ');
-
-        let fragment = `fragment ${type.name} on ${type.name} {\n  ${fields}\n}`;
-        fragment = formatFragment(fragment);
-
-        const fragmentFilePath = path.join(fragmentsDir, `${type.name}.graphql`);
-        await fs.writeFile(fragmentFilePath, fragment, 'utf8');
+      if (!response.ok) {
+        const text = await response.text();
+        reporter.error(`API response error: ${text}`);
+        
+        return;
       };
-    };
 
-    reporter.success('GraphQL fragments have been fetched, formatted, and saved.');
-  } catch (error) {
-    reporter.error('An error occurred while fetching fragments:', error);
-  };
+      const result = await response.json();
+
+      if (!result.data || !result.data.__schema) {
+        reporter.error('API response does not contain __schema.');
+        console.log('Response:', result);
+        
+        return;
+      };
+
+      const schema = result.data.__schema.types;
+      const excludedFieldNames = ['count', 'node', 'pageInfo', 'hex', 'latitude', 'raw'];
+
+      const allowedTypes = options.allowedTypes || schema
+        .filter(type => 
+          (!type.fields || !type.fields.some(field => 
+            excludedFieldNames.some(excluded => field.name.includes(excluded))
+          ))
+        )
+        .map(type => type.name);
+
+      for (const type of schema) {
+        if (type.kind === 'OBJECT' && allowedTypes.includes(type.name)) {
+          const annotatedFields = await filterFields(type.fields, schema, options);
+          const fields = annotatedFields.join('\n  ');
+
+          let fragment = `fragment ${type.name} on ${type.name} {\n  ${fields}\n}`;
+          fragment = formatFragment(fragment);
+
+          const fragmentFilePath = path.join(fragmentsDir, `${type.name}.graphql`);
+          await fs.writeFile(fragmentFilePath, fragment, 'utf8');
+        };
+      };
+
+      reporter.success('GraphQL fragments have been fetched, formatted, and saved.');
+    } catch (error) {
+        reporter.error('An error occurred while fetching fragments:', error);
+    };
 };
 
 module.exports = { fetchFragments };
