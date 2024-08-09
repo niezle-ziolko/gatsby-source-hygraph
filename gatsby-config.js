@@ -16,7 +16,7 @@ module.exports = {
         endpoint: process.env.ENDPOINT,
         token: process.env.TOKEN,
         assetsPath: '.assets',
-        fragmentsPath: '.fragments',
+        fragmentsName: '.fragments',
         locales: ['en', 'pl'],
         stages: ['PUBLISHED'],
         allowedTypes: [
